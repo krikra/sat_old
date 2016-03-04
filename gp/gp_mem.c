@@ -46,8 +46,9 @@ void gp_setvec(GP *gp, const int size_buf)
 	gp->F = calloc(gp->k * gp->dd, sizeof(double));
 	//gp->e = malloc(sizeof(double) * gp->dd);
 	gp->e = calloc(size_buf, sizeof(double));
-	gp->rr = calloc(gp->dd * size_buf, sizeof(double));
-	gp->uu = calloc(gp->k * gp->dd, sizeof(double));
+	gp->rr = calloc(size_buf, sizeof(double));
+	// gp->uu is no longer used
+	//gp->uu = calloc(gp->k * gp->dd, sizeof(double));
 	//gp->uu = malloc(sizeof(double) * gp->k * gp->dd);
 
 	gp->ux = malloc(sizeof(double) * gp->dim * size_buf);

@@ -66,7 +66,6 @@ int sat_choose(SAT *sat, int *para)
 #endif
 
 	if(sat->cond){printf("estimation has been terminated.\n");return(1);}
-	if(sat->iter >= sat->gp->size_buf){printf("BUFFER IS RAN OUT; ROUTINE IS TERMINATED\n");return(2);}
 
 	if(sat->iter < sat->dd_init)
 	{
@@ -148,7 +147,6 @@ int sat_update(SAT *sat, int para, double val)
 	int *p;
 
 	if(sat->cond){printf("estimation has been terminated.\n");return(1);}
-	if(sat->iter >= sat->gp->size_buf){printf("BUFFER IS RAN OUT; ROUTINE IS TERMINATED\n");return(2);}
 
 	p = malloc(sizeof(int) * sat->dim);
 
@@ -164,6 +162,8 @@ int sat_update(SAT *sat, int para, double val)
 	sat->used[para]++;
 
 	sat->gp->ud = ++sat->iter;
+
+	if(sat->iter >= sat->gp->size_buf){printf("BUFFER IS RAN OUT; ROUTINE IS TERMINATED\n");sat->cond = 2;return(2);}
 
 	free(p);
 }

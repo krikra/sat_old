@@ -3,7 +3,7 @@
 
 #include "gp.h"
 
-double kernel(const double *x, const double *y, const double *phi, const int dim)
+double kernel(const double *x, const double *y, const double *phi, const int dim, double *kernel)
 {
 	int i;
 	double tmp = 0.0;
@@ -12,6 +12,7 @@ double kernel(const double *x, const double *y, const double *phi, const int dim
 	{
 		tmp -= phi[i] * (x[i] - y[i]) * (x[i] - y[i]);
 	}
+	*kernel = exp(tmp);
 	return(exp(tmp));
 }
 
@@ -19,8 +20,9 @@ double kernel_deriv(const int cor, const double *x, const double *y, const doubl
 {
 	//printf("%d %e %e %e %d\n", cor, *x, *y, *phi, dim);
 	//printf("ker %e %e %e\n", (x[cor] - y[cor])*(x[cor] - y[cor]), kernel(x, y, phi, dim), -((x[cor] - y[cor]) * (x[cor] - y[cor])) * (kernel(x, y, phi, dim)));
-	*deriv = -((x[cor] - y[cor]) * (x[cor] - y[cor])) * (kernel(x, y, phi, dim));
-	return(-((x[cor] - y[cor]) * (x[cor] - y[cor])) * (kernel(x, y, phi, dim)));
+	double tmp;
+	*deriv = -((x[cor] - y[cor]) * (x[cor] - y[cor])) * (kernel(x, y, phi, dim, &tmp));
+	return(-((x[cor] - y[cor]) * (x[cor] - y[cor])) * (kernel(x, y, phi, dim, &tmp)));
 }
 
 /*
@@ -60,7 +62,7 @@ void R_packed_U(double *R, const double *phi, const double *ux, const int ud, co
 	{
 		for(j=0;j<=i;j++)
 		{
-			R[offset + j] = kernel(&ux[i*dim], &ux[j*dim], phi, dim);
+			kernel(&ux[i*dim], &ux[j*dim], phi, dim, &R[offset + j]);
 		}
 		offset += i+1;
 	}
@@ -75,7 +77,7 @@ void R_packed_L(double *R, const double *phi, const double *ux, const int ud, co
 	{
 		for(j=i;j<ud;j++)
 		{
-			R[offset + j-i] = kernel(&ux[i*dim], &ux[j*dim], phi, dim);
+			kernel(&ux[i*dim], &ux[j*dim], phi, dim, &R[offset + j-i]);
 		}
 		offset += ud - i;
 	}
@@ -89,7 +91,7 @@ void R_dense(double *R, const double *phi, const double *ux, const int ud, const
 	{
 		for(j=0;j<ud;j++)
 		{
-			R[i * ud + j] = kernel(&ux[i*dim], &ux[j*dim], phi, dim);
+			kernel(&ux[i*dim], &ux[j*dim], phi, dim, &R[i * ud + j]);
 		}
 	}
 }
@@ -143,6 +145,7 @@ void r_init_1d(double *rr, const double *xx, const double *ux, const double *phi
 }
 */
 
+/*
 void r_init(double *rr, const double **xx, const double *ux, const double *phi, const int *n, const int ud, const int dim, const int size_buf, double *x, const int ii)
 {
 	int i, j;
@@ -159,6 +162,7 @@ void r_init(double *rr, const double **xx, const double *ux, const double *phi, 
 		}
 	}
 }
+*/
 
 /*
 void gp_x_init(GP *gp, double **x)
