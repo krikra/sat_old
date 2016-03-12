@@ -8,6 +8,7 @@
 #include "clapack.h"
 #include "cblas.h"
 #include "gp.h"
+#include "gp_power.h"
 
 //#define SAT_DEBUG
 
@@ -38,12 +39,24 @@ int log_lkhd(GP *gp, double *phi, double *fn, double *gr)
 	double *dwork;
 	int *iwork;
 
+	int ii;
+	double nug;
+
 	double t;
 
 	deriv = malloc(sizeof(double) * gp->ud);
 	re = malloc(sizeof(double) * gp->ud);
 
 	R_packed_U(gp->R, gp->phi, gp->ux, gp->ud, gp->dim);
+
+	nugget(gp->R, gp->ud, &nug);
+	printf("nugget %e\n", nug);
+
+	for(i=0, ii=0;i<gp->ud;i++)
+	{
+		gp->R[ii+i] += nug;
+		ii += i + 1;
+	}
 
 /*
 	for(i=0,offset=0;i<gp->ud;i++)

@@ -154,7 +154,7 @@ void r_init(double *rr, const double **xx, const double *ux, const double *phi, 
 		x[ii] = xx[ii][i];
 		if(ii > 0){r_init(rr, xx, ux, phi, n, ud, dim, size_buf, x, ii-1);}
 		else
-		{
+	
 			for(j=0;j<ud;j++)
 			{
 				rr[i*size_buf+j] = kernel(x, &ux[j*dim], phi, dim);
