@@ -75,7 +75,7 @@ void gp_destroy(GP *gp)
 	free(gp->F);
 	free(gp->e);
 	free(gp->rr);
-	free(gp->uu);
+	//free(gp->uu);
 	free(gp->ux);
 	free(gp->uy);
 	//free(gp->xx);
