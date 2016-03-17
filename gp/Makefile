@@ -1,7 +1,7 @@
 include ../Makefile.in
 
 
-OBJ=gp_kernel.o gp_misc.o gp_mem.o
+OBJ=gp_kernel.o gp_power.o gp_misc.o gp_mem.o
 
 gp.a: ${OBJ}
 	ar rcs $@ $^

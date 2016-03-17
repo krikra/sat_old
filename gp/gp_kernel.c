@@ -8,6 +8,7 @@
 #include "clapack.h"
 #include "cblas.h"
 #include "gp.h"
+#include "gp_power.h"
 
 //#define SAT_DEBUG
 
@@ -38,12 +39,24 @@ int log_lkhd(GP *gp, double *phi, double *fn, double *gr)
 	double *dwork;
 	int *iwork;
 
+	int ii;
+	double nug;
+
 	double t;
 
 	deriv = malloc(sizeof(double) * gp->ud);
 	re = malloc(sizeof(double) * gp->ud);
 
 	R_packed_U(gp->R, gp->phi, gp->ux, gp->ud, gp->dim);
+
+	nugget(gp->R, gp->ud, &nug);
+	printf("nugget %e\n", nug);
+
+	for(i=0, ii=0;i<gp->ud;i++)
+	{
+		gp->R[ii+i] += nug;
+		ii += i + 1;
+	}
 
 /*
 	for(i=0,offset=0;i<gp->ud;i++)
@@ -245,6 +258,62 @@ void gp_mle(GP *gp)
 	free(gr);
 }
 
+void gp_surrogate_re(GP *gp, double *x, int ii, int iii)
+{
+	const char U = 'U';
+	const char N = 'N';
+	const char T = 'T';
+	const int one = 1;
+
+	int i, j;
+	int nn = gp->dd;
+	double u;
+
+	for(i=ii;i<gp->dim;i++)
+	{
+		nn /= gp->nd[i];
+	}
+	for(i=0;i<gp->nd[ii];i++)
+	{
+		x[ii] = gp->x[ii][i];
+		if( ii > 0 ){gp_surrogate_re(gp, x, ii-1, iii + i * nn);}else
+		{
+			for(j=0;j<gp->ud;j++)
+			{
+				kernel(x, &gp->ux[j*gp->dim], gp->phi, gp->dim, &gp->rr[j]);
+			}
+			dtpsv_(&U, &T, &N, &gp->ud, gp->R, gp->rr, &one); // R^-1 * r 
+			gp->mean[iii + i * nn] = ddot_(&gp->ud, gp->rr, &one, gp->e, &one) + *gp->beta; //mean = beta + e^t * R^-1 * r
+			u = ddot_(&gp->ud, gp->rr, &one, gp->F, &one) - 1.0;
+			gp->mse[iii + i * nn] = gp->sigma * (1.0 - ddot_(&gp->ud, gp->rr, &one, gp->rr, &one) + u * u * (1.0 / *gp->FRF));
+		}
+	}
+}
+
+/*
+void gp_surrogate_point(GP *gp, int para)
+{
+	int i, j;
+	double *x;
+	int one = 1;
+	double oned = 1.0;
+	double zerod = 0.0;
+	int err;
+	char U = 'U';
+	char N = 'N';
+	char T = 'T';
+
+	dtpsv_(&U, &T, &N, &gp->ud, gp->R, x, &one);
+
+	*gp->mean = ddot_(&gp->ud, x, &one, gp->e, &one); //mean = r^t * R^-1 * e
+
+	*gp->uu = ddot_(&gp->ud, x, &one, gp->F, &one) - 1.0; //u = 1^t * R^-1 * r - 1
+
+	*gp->mse = gp->sigma * (1.0 - ddot_(&gp->ud, x, &one, x, &one) + (u * u / *gp->FRF));
+
+}
+*/
+
 void gp_surrogate(GP *gp)
 {
 	int i, j;
@@ -259,43 +328,25 @@ void gp_surrogate(GP *gp)
 
 	x = calloc(gp->dim, sizeof(double));
 
+
+	gp_surrogate_re(gp, x, gp->dim - 1, 0);
 	//r_init_1d(gp->rr, gp->xx, gp->ux, gp->phi, gp->dd, gp->ud, gp->dim);
-	r_init(gp->rr, gp->x, gp->ux, gp->phi, gp->nd, gp->ud, gp->dim, gp->size_buf, x, gp->dim-1);
+	//r_init(gp->rr, gp->x, gp->ux, gp->phi, gp->nd, gp->ud, gp->dim, gp->size_buf, x, gp->dim-1);
+	
 	free(x);
 
-	//dpptrs_(&U, &gp->ud, &gp->dd, gp->R, gp->rr, &gp->dd, &err); // R^-1 * r 
-	for(i=0;i<gp->dd;i++)
-	{
-		dtpsv_(&U, &T, &N, &gp->ud, gp->R, &gp->rr[i*gp->size_buf], &one); // R^-1 * r 
-	}
-	//if(err!=0){printf("error: %d\n", err);}
+	//dgemv_(&T, &gp->ud, &gp->dd, &oned, gp->rr, &gp->dd, gp->e, &one, &zerod, gp->mean, &one); //mean = r^t * R^-1 * e
+	//dgemv_(&T, &gp->ud, &gp->dd, &oned, gp->rr, &gp->dd, gp->F, &one, &zerod, gp->uu, &one); //u = 1^t * R^-1 * r
 
 /*
 	for(i=0;i<gp->dd;i++)
 	{
-		for(j=0;j<gp->ud;j++)
-		{
-			printf("%e ", gp->rr[i*gp->dd+j]);
-		}
-		printf("\n");
-	}
-*/
-
-	dgemv_(&T, &gp->ud, &gp->dd, &oned, gp->rr, &gp->dd, gp->e, &one, &zerod, gp->mean, &one); //mean = r^t * R^-1 * e
-
-	dgemv_(&T, &gp->ud, &gp->dd, &oned, gp->rr, &gp->dd, gp->F, &one, &zerod, gp->uu, &one); //u = 1^t * R^-1 * r
-
-	for(i=0;i<gp->dd;i++)
-	{
 		gp->uu[i] -= 1.0;
-		//gp->uu[i] /= sqrt(&gp->FRF);
-
 		gp->mean[i] += *gp->beta; // mean += beta
 		gp->mse[i] = 1.0 - ddot_(&gp->ud, &gp->rr[i*gp->size_buf], &one, &gp->rr[i*gp->size_buf], &one);
-		//printf("1 - rRr %e\n", gp->mse[i]);
 		gp->mse[i] += gp->uu[i] * (1.0/(*gp->FRF)) * gp->uu[i];
-		//printf("1 - rRr - uFRFu %e\n", gp->mse[i]);
-		//gp->mse[i] += ddot_(&gp->k, &gp->uu[i*gp->k], &one, &gp->uu[i*gp->k], &one);
-		gp->mse[i] *= gp->sigma; // mse = sigma * (1 - r^t * R^-1 * r + u^t * F^t * R^-1 * F * u)
+		gp->mse[i] *= gp->sigma; // mse = sigma * (1 - r^t * R^-1 * r + u^t * (F^t * R^-1 * F)^-1 * u)
 	}
+*/
 }
+

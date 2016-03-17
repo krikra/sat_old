@@ -1,7 +1,7 @@
 #ifndef __CBLAS__
 #define __CBLAS__
-double ddot_(int *, double *, int *, double *, int *);
-void dspmv_(char *, char *, char *, int *, double *, double *, int *);
-void dgemv_(char *, int *, int *, double *, double *, int *, double *, int *, double *, double *, int *);
-void dgemm_(char *, char *, int *, int *, int *, double *, double *, int *, double *, int *, double *, double *, int *);
+double ddot_(const int *, const double *, const int *, const double *, const int *);
+void dspmv_(const char *, const int *, const double *, const double *, const double *, const int *, const double *, double *, const int *);
+void dgemv_(const char *, const int *, const int *, const double *, const double *, const int *, const double *, const int *, const double *, double *, const int *);
+void dgemm_(const char *, const char *, const int *, const int *, const int *, const double *, const double *, const int *, const double *, const int *, const double *, double *, const int *);
 #endif
