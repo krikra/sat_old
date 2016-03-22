@@ -1,4 +1,6 @@
+#include <stdlib.h>
 #include "sat.h"
+#include "sat_mem.h"
 #include "sat_sys.h"
 #include "ippe_id.h"
 
@@ -6,22 +8,25 @@ void *sat_f_setdim_(const int *dim)
 {
 	SAT *sat;
 	sat = malloc(sizeof(SAT));
-	sat_setdim(sat, dim);
+	sat_setdim(sat, *dim);
 	return((void *)sat);
 }
 
-void sat_f_setvec_(void **sat, const int *n, const int *num, const int *buff, char *id, int *id_num)
+void sat_f_setvec_(void **s, const int *n, const int *num, const int *buff, char *id, int *id_num)
 {
+	SAT *sat;
+	sat = *(SAT **)s;
+
 	int i;
-	*(SAT **)sat->dd_whole = 1;
-	for(i=0;i<*(SAT **)sat->dim;i++)
+	sat->dd_whole = 1;
+	for(i=0;i<sat->dim;i++)
 	{
-		*(SAT **)sat->nd_whole[i] = n[i];
-		*(SAT **)sat->dd_whole *= n[i];
+		sat->nd_whole[i] = n[i];
+		sat->dd_whole *= n[i];
 	}
-	*(SAT **)sat->tol = 0.01;
-	*(SAT **)sat->dd_init = num;
-	sat_setvec(*(SAT **)sat, *buff);
+	sat->tol = 0.01;
+	sat->dd_init = *num;
+	sat_setvec(sat, *buff);
 		
 	initial_user(sat, id);
 }
@@ -38,7 +43,7 @@ void sat_f_update_(void **sat, int *para, double *val)
 
 int sat_f_terminated(void **sat)
 {
-	return(sat->cond);
+	return((*(SAT **)sat)->cond);
 }
 
 void sat_f_destroy_(void **sat)

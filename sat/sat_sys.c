@@ -4,6 +4,7 @@
 #include <omp.h>
 
 #include "sat.h"
+#include "gp_kernel.h"
 
 //#define SAT_DEBUG
 
@@ -11,6 +12,7 @@ double pnorm(double x)
 {
 	double pnorm;
 	pnorm = 0.5 * (1.0 + erf(1.0 / sqrt(2.0) * x));
+	return(pnorm);
 }
 
 double dnorm(double x)
@@ -139,6 +141,7 @@ int sat_choose(SAT *sat, int *para)
 		printf("EI_MAX %e\n", eimax);
 		if(eimax < sat->tol){sat->cond = 1; *para = sat->bestp; return(1);}
 	}
+	return(0);
 }
 
 int sat_update(SAT *sat, int para, double val)
@@ -166,4 +169,5 @@ int sat_update(SAT *sat, int para, double val)
 	if(sat->iter >= sat->gp->size_buf){printf("BUFFER IS RAN OUT; ROUTINE IS TERMINATED\n");sat->cond = 2;return(2);}
 
 	free(p);
+	return(0);
 }

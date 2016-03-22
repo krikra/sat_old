@@ -2,6 +2,7 @@
 
 #include "sat.h"
 #include "gp_kernel.h"
+#include "gp_mem.h"
 #include "gp_misc.h"
 
 void sat_setdim(SAT *sat, const int dim)

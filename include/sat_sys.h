@@ -1,3 +1,4 @@
+#include "sat.h"
 #ifndef __SAT_SYS__
 #define __SAT_SYS__
 

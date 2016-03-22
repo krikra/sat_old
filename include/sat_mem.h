@@ -1,3 +1,4 @@
+#include "sat.h"
 #ifndef __SAT_MEM__
 #define __SAT_MEM__
 

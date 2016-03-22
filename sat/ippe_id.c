@@ -41,7 +41,7 @@ void initial_grid(SAT *ip, int *nd_init)
 void initial_user_2d(SAT *ip, char *path)
 {
 	int iter;
-	FILE *fp;
+	FILE *fp = NULL;
 	int num = ip->dd_init;
 	char lhd[128];
 
@@ -152,7 +152,7 @@ void initial_user(SAT *ip, char *path)
 	int i;
 	int iter;
 	int tmp;
-	FILE *fp;
+	FILE *fp = NULL;
 	int num = ip->dd_init;
 	int dim = ip->dim;
 	char lhd[128];
@@ -162,6 +162,8 @@ void initial_user(SAT *ip, char *path)
 
 	xx = malloc(sizeof(double) * num * dim);
 	x = malloc(sizeof(int) * dim);
+
+	printf("%s\n", path);
 
 	fp = fopen(path, "r");
 	if(fp == NULL){printf("idopen fail!!!\n");}
