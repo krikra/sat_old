@@ -1,8 +1,8 @@
 INC=../include
 CC=gcc
 FC=gfortran
-CFLAGS= -g -O3 -lm -fopenmp
-FFLAGS= -g -O3 -lm -fopenmp
+CFLAGS= -g -Wall -O3 -lm -fopenmp
+FFLAGS= -g -Wall -O3 -lm -fopenmp
 
 LIB_LAPACK=~/lapack-3.5.0/liblapack.a
 LIB_BLAS=~/lapack-3.5.0/BLAS/SRC/librefblas.a
