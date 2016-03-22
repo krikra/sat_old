@@ -8,11 +8,12 @@ module sat_f
          type(C_PTR) :: sat_f_setdim
       end function
 
-      subroutine sat_f_setvec(sat, n, num, buff)
+      subroutine sat_f_setvec(sat, n, num, buff, id)
          use, intrinsic :: iso_c_binding, only: C_PTR
          type(C_PTR) :: sat
          integer, dimension(:) :: n
          integer :: num, buff
+         character(len=*) :: id
       end subroutine
 
       subroutine sat_f_destroy(sat)

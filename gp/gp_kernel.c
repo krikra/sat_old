@@ -9,6 +9,7 @@
 #include "cblas.h"
 #include "gp.h"
 #include "gp_power.h"
+#include "gp_misc.h"
 
 //#define SAT_DEBUG
 
@@ -175,6 +176,8 @@ int log_lkhd(GP *gp, double *phi, double *fn, double *gr)
 
 	free(deriv);
 	free(re);
+
+	return(0);
 }
 
 void gp_mle(GP *gp)
