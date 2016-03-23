@@ -44,10 +44,25 @@ void decomp(SAT *sat, int para, int *decomp)
 	for(i=sat->dim-1;i>=0;i--)
 	{
 		tmptmp /= sat->nd_whole[i];
+		decomp[sat->dim - 1 - i] = tmp / tmptmp;
+		tmp %= tmptmp;
+	}
+}
+/*
+void decomp(SAT *sat, int para, int *decomp)
+{
+	int i;
+	int tmp, tmptmp;
+	tmp = para;
+	tmptmp = sat->dd_whole;
+	for(i=sat->dim-1;i>=0;i--)
+	{
+		tmptmp /= sat->nd_whole[i];
 		decomp[i] = tmp / tmptmp;
 		tmp %= tmptmp;
 	}
 }
+*/
 
 int sat_choose(SAT *sat, int *para)
 {
