@@ -130,6 +130,11 @@ int sat_load(SAT *sat, const char *path)
 	fread(&sat->dim, sizeof(int), 1, fp);
 	fread(&sat->dd_init, sizeof(int), 1, fp);
 	fread(&sat->dd_whole, sizeof(int), 1, fp);
+
+	sat->nd_whole = malloc(sizeof(int) * sat->dim);
+	sat->id = malloc(sizeof(int) * sat->dd_init);
+	sat->used = malloc(sizeof(int) * sat->dd_whole);
+
 	fread(sat->nd_whole, sizeof(int), sat->dim, fp);
 
 	fread(&sat->iter, sizeof(int), 1, fp);
@@ -142,13 +147,34 @@ int sat_load(SAT *sat, const char *path)
 	fread(sat->id, sizeof(int), sat->dd_init, fp);
 	fread(sat->used, sizeof(int), sat->dd_whole, fp);
 
+	sat->gp = malloc(sizeof(GP));
 
 	fread(&sat->gp->dim, sizeof(int), 1, fp);
 	fread(&sat->gp->dd, sizeof(int), 1, fp);
 	fread(&sat->gp->ud, sizeof(int), 1, fp);
 	fread(&sat->gp->k, sizeof(int), 1, fp);
-	fread(sat->gp->nd, sizeof(int), sat->gp->dim, fp);
 	fread(&sat->gp->size_buf, sizeof(int), 1, fp);
+
+	sat->gp->nd = malloc(sizeof(int) * sat->gp->dim);
+	fread(sat->gp->nd, sizeof(int), sat->gp->dim, fp);
+
+	//fread(sat->gp->R, sizeof(int), sat->gp->dim, fp);
+	sat->gp->R = malloc(sizeof(double) * (sat->gp->size_buf * (sat->gp->size_buf + 1) / 2));
+	sat->gp->FRF = malloc(sizeof(double) * (sat->gp->k * (sat->gp->k + 1) / 2));
+	sat->gp->F = malloc(sizeof(double) * sat->gp->size_buf * sat->gp->k);
+	sat->gp->e = malloc(sizeof(double) * sat->gp->size_buf);
+	sat->gp->rr = malloc(sizeof(double) * sat->gp->size_buf);
+	sat->gp->ux = malloc(sizeof(double) * sat->gp->size_buf * sat->gp->dim);
+	sat->gp->uy = malloc(sizeof(double) * sat->gp->size_buf);
+	sat->gp->mean = malloc(sizeof(double) * sat->gp->dd);
+	sat->gp->mse = malloc(sizeof(double) * sat->gp->dd);
+	sat->gp->beta = malloc(sizeof(double) * sat->gp->k);
+	sat->gp->phi = malloc(sizeof(double) * sat->gp->dim);
+	sat->gp->x = malloc(sizeof(double *) * sat->gp->dim);
+	for(i=0;i<sat->gp->dim;i++)
+	{
+		sat->gp->x[i] = malloc(sizeof(double) * sat->gp->nd[i]);
+	}
 
 	fread(sat->gp->R, sizeof(double), (sat->gp->size_buf * (sat->gp->size_buf + 1) / 2), fp);
 	fread(sat->gp->FRF, sizeof(double), (sat->gp->k * (sat->gp->k + 1) / 2), fp);
