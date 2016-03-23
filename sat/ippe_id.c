@@ -163,7 +163,7 @@ void initial_user(SAT *ip, char *path)
 	xx = malloc(sizeof(double) * num * dim);
 	x = malloc(sizeof(int) * dim);
 
-	printf("%s\n", path);
+	//printf("%s\n", path);
 
 	fp = fopen(path, "r");
 	if(fp == NULL){printf("idopen fail!!!\n");}

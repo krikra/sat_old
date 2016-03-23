@@ -9,10 +9,10 @@ void *sat_f_setdim_(const int *dim)
 	SAT *sat;
 	sat = malloc(sizeof(SAT));
 	sat_setdim(sat, *dim);
-	return((void *)sat);
+	return(sat);
 }
 
-void sat_f_setvec_(void **s, const int *n, const int *num, const int *buff, char *id, int *id_num)
+void sat_f_setvec_(void **s, const int **n, const int *num, const int *buff, char *id, int *id_num)
 {
 	SAT *sat;
 	sat = *(SAT **)s;
@@ -21,8 +21,8 @@ void sat_f_setvec_(void **s, const int *n, const int *num, const int *buff, char
 	sat->dd_whole = 1;
 	for(i=0;i<sat->dim;i++)
 	{
-		sat->nd_whole[i] = n[i];
-		sat->dd_whole *= n[i];
+		sat->nd_whole[i] = (*(n))[i];
+		sat->dd_whole *= (*(n))[i];
 	}
 	sat->tol = 0.01;
 	sat->dd_init = *num;

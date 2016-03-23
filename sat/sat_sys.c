@@ -44,6 +44,7 @@ void decomp(SAT *sat, int para, int *decomp)
 	for(i=sat->dim-1;i>=0;i--)
 	{
 		tmptmp /= sat->nd_whole[i];
+//from decomp[0] to decomp[dim - 1]
 		decomp[sat->dim - 1 - i] = tmp / tmptmp;
 		tmp %= tmptmp;
 	}
