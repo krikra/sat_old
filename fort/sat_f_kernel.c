@@ -61,3 +61,13 @@ void sat_f_destroy_(void **sat)
 {
 	sat_destroy(*(SAT **)sat);
 }
+
+void sat_f_save_(const void **sat, const char *path)
+{
+	sat_save(*(SAT **)sat, path);
+}
+
+void sat_f_load_(void **sat, const char *path)
+{
+	sat_load(*(SAT **)sat, path);
+}

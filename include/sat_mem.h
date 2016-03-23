@@ -8,4 +8,7 @@ int sat_setvec(SAT *, const int);
 
 int sat_destroy(SAT *);
 
+int sat_save(const SAT *, const char *);
+int sat_load(SAT *, const char *);
+
 #endif

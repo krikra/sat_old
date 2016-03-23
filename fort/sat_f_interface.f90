@@ -39,5 +39,17 @@ module sat_f
          type(C_PTR) :: sat
          integer :: sat_f_terminated
       end function 
+
+      subroutine sat_f_save(sat, path)
+         use, intrinsic :: iso_c_binding, only: C_PTR
+         type(C_PTR) :: sat
+         character(len=*) :: path
+      end subroutine
+
+      subroutine sat_f_load(sat, path)
+         use, intrinsic :: iso_c_binding, only: C_PTR
+         type(C_PTR) :: sat
+         character(len=*) :: path
+      end subroutine
    end interface
 end module
