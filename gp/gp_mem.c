@@ -25,7 +25,7 @@ void gp_setdim(GP *gp, const int dim)
 	gp->k = 1;
 	for(i=0;i<dim;i++)
 	{
-		gp->phi[i] = 10.0;
+		gp->phi[i] = 1.0;
 	}
 }
 
