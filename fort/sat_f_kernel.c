@@ -4,6 +4,8 @@
 #include "sat_sys.h"
 #include "ippe_id.h"
 
+#define fx10
+
 void *sat_f_setdim_(const int *dim)
 {
 	SAT *sat;
@@ -11,8 +13,11 @@ void *sat_f_setdim_(const int *dim)
 	sat_setdim(sat, *dim);
 	return(sat);
 }
-
+#ifdef fx10
+void sat_f_setvec_(void **s, const int *n, const int *num, const int *buff, char *id, int *id_num)
+#else
 void sat_f_setvec_(void **s, const int **n, const int *num, const int *buff, char *id, int *id_num)
+#endif
 {
 	SAT *sat;
 	sat = *(SAT **)s;
@@ -21,9 +26,15 @@ void sat_f_setvec_(void **s, const int **n, const int *num, const int *buff, cha
 	sat->dd_whole = 1;
 	for(i=0;i<sat->dim;i++)
 	{
+#ifdef fx10
+		sat->nd_whole[i] = n[i];
+		sat->dd_whole *= n[i];
+#else
 		sat->nd_whole[i] = (*(n))[i];
 		sat->dd_whole *= (*(n))[i];
+#endif
 	}
+	printf("debug %d %d %d\n", n[0], n[1], n[2]);
 	sat->tol = 0.01;
 	sat->dd_init = *num;
 	sat_setvec(sat, *buff);
