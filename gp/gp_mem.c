@@ -31,12 +31,16 @@ void gp_setdim(GP *gp, const int dim)
 
 void gp_setvec(GP *gp, const int size_buf)
 {
-	int i;
+	int i, j;
 	gp->size_buf = size_buf;
 
 	for(i=0;i<gp->dim;i++)
 	{
 		gp->x[i] = malloc(sizeof(double) * gp->nd[i]);
+		for(j=0;j<gp->nd[i];j++)
+		{
+			gp->x[i][j] = (double)(j) / (double)(gp->nd[i] - 1.0);
+		}
 	}
 	//malloc_R(gp->R, gp->dd);
 	gp->R = malloc(sizeof(double) * ((size_buf * (size_buf + 1)) / 2));
