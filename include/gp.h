@@ -7,8 +7,8 @@ struct _gp
 	
 	double *F; //matrix (k * N)
 	double *e; //vector (N)
-	double *rr; //matrix (N * n)
-	double *uu; //matrix (k * n)
+	double *rr; //vector (N)
+	//double *uu; //matrix (k * n)
 
 	double *ux; //matrix (dim * N)
 	double *uy; //vector (N)
