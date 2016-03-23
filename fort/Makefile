@@ -8,6 +8,7 @@ OBJ=sat_f_interface.o sat_f_kernel.o
 
 sat_f.a: ${OBJ}
 	ar rcs $@ $^
+	cp $@ ../
 
 ${OBJ}:
 
